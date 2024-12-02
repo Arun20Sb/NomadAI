@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
+
 function Hotels({ tripDb }) {
   const [videos, setVideos] = useState([]);
-  const API_KEY = "47239048-5cafadd9dcf72423ccb93e76f"; // Replace with a secure method in production
 
   // Fetch videos from Pixabay
   useEffect(() => {

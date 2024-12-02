@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 
+# Add .env to .gitignore
 .env
 
 # Editor directories and files

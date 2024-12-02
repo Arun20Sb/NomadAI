@@ -3,9 +3,10 @@ import axios from "axios";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
+const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
+
 function DailyPlan({ tripDb }) {
   const [images, setImages] = useState([]);
-  const API_KEY = "47239048-5cafadd9dcf72423ccb93e76f"; // Replace this with a secure method for production
 
   // Fetch images from Pixabay
   useEffect(() => {
