@@ -3,16 +3,15 @@ import { Button } from "../button";
 
 function Hero() {
   return (
-    <div className="flex flex-col items-center lg:mx-56 md:mx-40 mx-7 gap-9">
-      <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center mt-16">
-        <span className="text-[#f56551]">
-          Lorem ipsum dolor sit amet consectetur.
-        </span>{" "}
-        Similique reprehenderit unde iure labore.
+    <div className="flex flex-col items-start mx-7 gap-9 p-10 mb-3">
+      <h1 className="font-semibold text-6xl max-sm:text-5xl md:text-6xl lg:text-8xl text-center mt-8">
+        Your Dream Trip, <br />Powered by AI
       </h1>
-      <p className="text-lg sm:text-xl md:text-2xl  text-gray-700 text-center">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum corrupti,
-        repellat accusantium culpa doloribus.
+      <p className="text-md sm:text-md md:text-xl  text-gray-700 text-pretty w-3/4 ">
+        Tell us a bit about your vibe, and let our AI work
+        <br />
+        its magic to create the perfect trip for you. <br /> Your next epic
+        getaway starts here.
       </p>
 
       <Link to={"/create-trip"}>

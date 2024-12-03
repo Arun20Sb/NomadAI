@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 const PageNotFound = () => {
   return (
@@ -11,16 +12,19 @@ const PageNotFound = () => {
         404
       </h1>
       <div className="bg-red-500 px-4 py-2 text-sm rounded rotate-12 absolute">
-        Page Not Found
+        Oops!
       </div>
       <p className="mt-5 text-xl text-gray-300">
-        Sorry, the page you are looking for does not exist.
+        We couldn't find the page you were lookin for fr
       </p>
       <Link
         to="/"
-        className="mt-8 px-6 py-3 bg-red-500 text-white font-medium text-lg rounded shadow-md hover:bg-red-600 focus:ring focus:ring-red-300 transition"
+        className="mt-8 px-6 py-3 bg-gray-950 text-white font-medium text-lg rounded shadow-md hover:shadow-lg hover:bg-gray-900 transition-all flex gap-2"
       >
-        Go Back Home
+        <span>
+          <FaArrowLeft />
+        </span>
+        <span>Go Back Home</span>
       </Link>
     </div>
   );

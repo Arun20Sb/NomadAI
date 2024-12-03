@@ -49,7 +49,10 @@ function CreateTrip() {
 
   // LOGIN:
   const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => getUserProfile(tokenResponse),
+    onSuccess: (tokenResponse) => {
+      getUserProfile(tokenResponse);
+      toast("User Signed In! 🍾 lfg🚀");
+    },
     onError: (error) => {
       console.log(error);
       toast("Login failed. Please try again.");
