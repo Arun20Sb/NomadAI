@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ViewTrip from "./view-trip/[tripId]/ViewTrip";
 import TripSave from "./mrTrip/TripSave";
+import Footer from "./view-trip/[tripId]/components/Footer";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/my-trip" element={<TripSave />}></Route>
             <Route path="*" element={<PageNotFound />} />
           </Routes>
+          <Footer />
         </GoogleOAuthProvider>
       </BrowserRouter>
     </>

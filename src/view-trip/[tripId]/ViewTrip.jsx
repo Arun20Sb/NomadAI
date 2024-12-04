@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import InfoSec from "./components/InfoSec";
 import Hotels from "./components/Hotels";
 import DailyPlan from "./components/DailyPlan";
-import Footer from "./components/Footer";
 
 function ViewTrip() {
   const { tripId } = useParams();
@@ -45,11 +44,6 @@ function ViewTrip() {
       {/* Daily Plan Section */}
       <div className="shadow-lg rounded-lg bg-white p-6">
         <DailyPlan tripDb={tripDb} />
-      </div>
-
-      {/* Footer Section */}
-      <div className="shadow-lg rounded-lg bg-white p-6">
-        <Footer />
       </div>
     </div>
   );

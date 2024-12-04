@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -297,27 +297,32 @@ function CreateTrip() {
       </div>
 
       {/* Login Dialog */}
-      <Dialog open={openDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogDescription>
-              <img
-                src="/logo2.jpg"
-                alt="JetSetGo"
-                width={152}
-                className="rounded-lg"
-              />
-              <h2 className="font-bold text-lg mt-7">Sign In With Google</h2>
-              <p>Sign in to the App with Google authentication securely.</p>
-
-              <Button className="w-full mt-5 flex items-center" onClick={login}>
-                <FcGoogle />
-                Sign In With Google
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      {openDialog && (
+        <Dialog>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Sign In</DialogTitle>
+              <DialogDescription>
+                <img
+                  src="/logo2.jpg"
+                  alt="JetSetGo"
+                  width={152}
+                  className="rounded-lg"
+                />
+                <h2 className="font-bold text-lg mt-7">Sign In With Google</h2>
+                <p>Sign in to the App with Google authentication securely.</p>
+                <Button
+                  className="w-full mt-5 flex items-center"
+                  onClick={login}
+                >
+                  <FcGoogle />
+                  Sign In With Google
+                </Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

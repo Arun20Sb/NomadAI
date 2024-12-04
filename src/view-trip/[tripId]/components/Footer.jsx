@@ -1,19 +1,16 @@
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10 mt-10">
-      <div className="container mx-auto px-4 text-center space-y-4">
-        <h2 className="text-xl font-semibold text-gray-100">
-          ✨ Explore. Plan. Enjoy. ✨
-        </h2>
-        <p className="text-sm text-gray-400">
-          Your journey starts here. Let us make it unforgettable.
+    <footer className="text-center p-5 mt-10 bg-gray-800 text-gray-100 ">
+      <div className="max-w-screen-lg mx-auto">
+        <h1 className="text-3xl font-bold mb-2">&copy; 2024 JetSetGo</h1>
+        <p className="text-md mb-4">
+          ✨ Explore. Plan. Enjoy. ✨ Your journey starts here. Let us make it
+          unforgettable.
         </p>
-        <div>
-          <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Wanderlust | All rights reserved.
-          </p>
-          <p className="text-xs text-gray-500 mt-2">Built with 💖 by mr_bob</p>
-        </div>
+
+        <p className="text-sm mb-2">
+          Built with 💖 by mr_bob 🍀. Your trusted search companion.
+        </p>
       </div>
     </footer>
   );

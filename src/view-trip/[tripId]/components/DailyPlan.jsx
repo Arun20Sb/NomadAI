@@ -13,9 +13,7 @@ function DailyPlan({ tripDb }) {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(
-            tripDb.userSelect.destination
-          )}&image_type=photo&per_page=15`
+          `https://pixabay.com/api/?key=${API_KEY}&q=${tripDb?.userSelect?.destination}&image_type=photo&per_page=15`
         );
         setImages(response.data.hits);
       } catch (error) {
@@ -27,24 +25,23 @@ function DailyPlan({ tripDb }) {
   }, []);
 
   return (
-    <div className="p-5 bg-gray-50 min-h-screen">
-      <h2 className="font-bold text-2xl mb-5 text-start text-gray-800">
-        Places to Visit
+    <div className="p-5 min-h-screen">
+      <h2 className="font-bold text-3xl underline mb-5 text-center text-gray-800">
+        Places to Explore
       </h2>
 
-      <div className="space-y-10">
+      <div>
         {tripDb?.tripDetails?.dayWisePlan?.map((day, index) => (
-          <div key={index} className="shadow-md p-5 bg-white rounded-lg">
-            <h2 className="font-semibold text-xl text-gray-700 mb-4">
+          <div key={index} className="p-5">
+            <h2 className="font-semibold text-xl text-gray-700 mb-5 border-2 px-7 py-2 inline-block border-b-blue-500 border-t-green-500 border-l-yellow-500 border-r-orange-500">
               Day {day?.day}
             </h2>
-            <div className="grid md:grid-cols-2 gap-8 grid-cols-1">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 grid-cols-1 py-2">
               {day?.activities?.map((place, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start space-x-4 border p-4 rounded-lg bg-gray-50 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  className="flex flex-wrap gap-2 items-center justify-center border p-4 rounded-lg shadow-sm hover:shadow-md duration-200 hover:bg-gray-100"
                 >
-                  {/* Display a random image from the fetched images */}
                   {images.length > 0 && (
                     <img
                       src={
@@ -52,7 +49,7 @@ function DailyPlan({ tripDb }) {
                           .webformatURL
                       }
                       alt="Location"
-                      className="w-32 h-32 rounded-lg object-cover"
+                      className="w-full h-32 rounded-sm object-cover "
                     />
                   )}
                   <div className="flex-1">
@@ -62,8 +59,9 @@ function DailyPlan({ tripDb }) {
                     <p className="text-sm text-gray-500 mb-2">
                       {place.details}
                     </p>
-                    <p className="text-sm text-green-500 font-medium">
-                      Time: {place.time}
+                    <p className="text-sm font-medium">
+                      Time:{" "}
+                      <span className="text-green-500 ">{place.time}</span>
                     </p>
                     <Button className="mt-2">
                       <a
@@ -72,9 +70,8 @@ function DailyPlan({ tripDb }) {
                           place?.placeName
                         }
                         target="_blank"
-                        rel="noopener noreferrer"
                       >
-                        View on Map
+                        Map
                       </a>
                       <FaMapMarkedAlt />
                     </Button>
