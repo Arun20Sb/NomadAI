@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { FcGoogle } from "react-icons/fc";
@@ -50,6 +51,7 @@ function CreateTrip() {
   // LOGIN:
   const login = useGoogleLogin({
     onSuccess: (tokenResponse) => {
+      console.log(tokenResponse);
       getUserProfile(tokenResponse);
       toast("User Signed In! 🍾 lfg🚀");
     },
@@ -63,7 +65,7 @@ function CreateTrip() {
   const getUserProfile = (tokenInfo) => {
     axios
       .get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
+        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenInfo?.access_token}`,
         {
           headers: {
             Authorization: `Bearer ${tokenInfo?.access_token}`,
