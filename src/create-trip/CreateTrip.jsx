@@ -176,155 +176,164 @@ function CreateTrip() {
   };
 
   return (
-    <div className="sm:px-10 md:px-32 lg:px-56 px-5 mt-10 mb-5">
-      <h2 className="font-bold text-3xl">Tell us your travel preferences 🏕️</h2>
-      <p className="mt-3 text-gray-500 text-xl">
-        Customize your dream trip with our AI-powered travel planner
-      </p>
+    <div className="sm:px-10 md:px-32 lg:px-56 px-5 mt-10 mb-5 text-gray-200 py-10">
+      <div className="border-2 p-5 bg-white text-gray-800 rounded-3xl">
+        <h2 className="font-bold text-3xl">
+          Tell us your travel preferences 🏕️
+        </h2>
+        <p className="mt-3 text-xl">
+          Customize your dream trip with our AI-powered travel planner
+        </p>
 
-      {/* Form Sections */}
-      <div className="mt-20 flex flex-col gap-9">
-        {/* Destination */}
-        <div>
-          <h2 className="text-xl my-3 font-medium">
-            What is your destination of choice?
-          </h2>
-          <AutocompleteInput
-            apiKey={GEOAPIFY_API_KEY}
-            onChange={handlePlaceChange}
-            placeholder="Enter your destination (e.g., Paris, Tokyo)"
-          />
-        </div>
-
-        {/* Trip Duration */}
-        <div>
-          <h2 className="text-xl my-3 font-medium">
-            How many days are you planning your trip?
-          </h2>
-          <Input
-            placeholder="Ex. 3"
-            type="number"
-            min={1}
-            max={7}
-            onChange={(e) => handleInputChange(e, "days")}
-            onWheel={(e) => e.preventDefault()}
-          />
-        </div>
-
-        {/* Date Selection */}
-        <div>
-          <h2 className="text-xl my-3 font-medium">When are you going?</h2>
-          <div className="flex justify-evenly">
-            <Calendar
-              mode="single"
-              selected={startDate}
-              onSelect={setStartDate}
-              className="rounded-lg border"
-            />
-
-            <img
-              src="/calender.jpg"
-              alt="Travel inspiration"
-              className="w-[450px] mt-6 hidden md:block rounded-lg filter brightness-125 relative bottom-5"
+        {/* Form Sections */}
+        <div className="mt-20 flex flex-col gap-9">
+          {/* Destination */}
+          <div>
+            <h2 className="text-xl my-3 font-medium  bg-gray-800 text-gray-50 p-2 inline-block rounded-lg">
+              What is your destination of choice?
+            </h2>
+            <AutocompleteInput
+              apiKey={GEOAPIFY_API_KEY}
+              onChange={handlePlaceChange}
+              placeholder="Enter your destination (e.g., Paris, Tokyo)"
             />
           </div>
-        </div>
 
-        {/* Budget Selection */}
-        <div>
-          <h2 className="text-xl my-3 font-medium">What is your Budget?</h2>
-          <div className="grid grid-cols-3 gap-6 mt-5">
-            {SelectBudgetOptions.map((item, index) => (
-              <div
-                key={index}
-                onClick={() =>
-                  handleInputChange({ target: { value: item.title } }, "budget")
-                }
-                className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
+          {/* Trip Duration */}
+          <div>
+            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 p-2 inline-block rounded-lg">
+              How many days are you planning your trip?
+            </h2>
+            <Input
+              placeholder="Ex. 3"
+              type="number"
+              min={1}
+              max={7}
+              onChange={(e) => handleInputChange(e, "days")}
+              onWheel={(e) => e.preventDefault()}
+            />
+          </div>
+
+          {/* Date Selection */}
+          <div>
+            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">When are you going?</h2>
+            <div className="flex">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={setStartDate}
+                className="rounded-2xl border-2 border-gray-900 bg-black text-gray-50"
+              />
+
+              <img
+                src="/calender.jpg"
+                alt="Travel inspiration"
+                className="w-[450px] mt-6 hidden lg:block rounded-lg filter brightness-125 relative bottom-5"
+              />
+            </div>
+          </div>
+
+          {/* Budget Selection */}
+          <div>
+            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">What is your Budget?</h2>
+            <div className="grid grid-cols-3 gap-6 mt-5">
+              {SelectBudgetOptions.map((item, index) => (
+                <div
+                  key={index}
+                  onClick={() =>
+                    handleInputChange(
+                      { target: { value: item.title } },
+                      "budget"
+                    )
+                  }
+                  className={`bg-black p-4 border rounded-lg hover:shadow-lg cursor-pointer  text-gray-50
                 ${
                   formInfo?.budget === item.title
-                    ? "shadow-lg border-black"
+                    ? "shadow-2xl border-4 border-green-400 animate-bounce bg-black"
                     : ""
                 }
-              `}
-              >
-                <h2 className="text-4xl">{item.icon}</h2>
-                <h2 className="font-bold text-lg">{item.title}</h2>
-                <h2 className="text-sm text-gray-500">{item.desc}</h2>
-              </div>
-            ))}
+                `}
+                >
+                  <h2 className="text-4xl pb-1">{item.icon}</h2>
+                  <h2 className="font-bold text-lg pb-1 underline">{item.title}</h2>
+                  <h2 className="text-sm">{item.desc}</h2>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Travelers Selection */}
-        <div>
-          <h2 className="text-xl my-3 font-medium">
-            Who do you plan to travel with on your next adventure?
-          </h2>
-          <div className="grid grid-cols-3 gap-6 mt-5">
-            {SelectTravelList.map((place, index) => (
-              <div
-                key={index}
-                onClick={() =>
-                  handleInputChange(
-                    { target: { value: place.people } },
-                    "travelers"
-                  )
-                }
-                className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
+          {/* Travelers Selection */}
+          <div>
+            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">
+              Who do you plan to travel with on your next adventure?
+            </h2>
+            <div className="grid grid-cols-3 gap-6 mt-5">
+              {SelectTravelList.map((place, index) => (
+                <div
+                  key={index}
+                  onClick={() =>
+                    handleInputChange(
+                      { target: { value: place.people } },
+                      "travelers"
+                    )
+                  }
+                  className={`p-4 bg-black border rounded-lg hover:shadow-lg cursor-pointer text-gray-50
                   ${
                     formInfo?.travelers === place.people &&
-                    "shadow-lg border-black"
+                    "shadow-2xl border-4 border-green-400 animate-bounce bg-black"
                   }
                   `}
-              >
-                <h2 className="text-4xl">{place.icon}</h2>
-                <h2 className="font-bold text-lg">{place.title}</h2>
-                <h2 className="text-sm text-gray-500">{place.desc}</h2>
-              </div>
-            ))}
+                >
+                  <h2 className="text-4xl pb-1">{place.icon}</h2>
+                  <h2 className="font-bold text-lg underline pb-1">{place.title}</h2>
+                  <h2 className="text-sm">{place.desc}</h2>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Generate Trip Button */}
-      <div className="my-10 flex justify-end">
-        <Button onClick={onGenerateTrip} disabled={isLoading}>
-          {isLoading ? (
-            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
-          ) : (
-            "Generate Trip"
-          )}
-        </Button>
-      </div>
+        {/* Generate Trip Button */}
+        <div className="my-10 flex justify-end">
+          <Button onClick={onGenerateTrip} disabled={isLoading}>
+            {isLoading ? (
+              <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+            ) : (
+              "Generate Trip"
+            )}
+          </Button>
+        </div>
 
-      {/* Login Dialog */}
-      {openDialog && (
-        <Dialog>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Sign In</DialogTitle>
-              <DialogDescription>
-                <img
-                  src="/logo2.jpg"
-                  alt="JetSetGo"
-                  width={152}
-                  className="rounded-lg"
-                />
-                <h2 className="font-bold text-lg mt-7">Sign In With Google</h2>
-                <p>Sign in to the App with Google authentication securely.</p>
-                <Button
-                  className="w-full mt-5 flex items-center"
-                  onClick={login}
-                >
-                  <FcGoogle />
-                  Sign In With Google
-                </Button>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )}
+        {/* Login Dialog */}
+        {openDialog && (
+          <Dialog>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Sign In</DialogTitle>
+                <DialogDescription>
+                  <img
+                    src="/logo2.jpg"
+                    alt="JetSetGo"
+                    width={152}
+                    className="rounded-lg"
+                  />
+                  <h2 className="font-bold text-lg mt-7">
+                    Sign In With Google
+                  </h2>
+                  <p>Sign in to the App with Google authentication securely.</p>
+                  <Button
+                    className="w-full mt-5 flex items-center"
+                    onClick={login}
+                  >
+                    <FcGoogle />
+                    Sign In With Google
+                  </Button>
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,25 +1,33 @@
 import { Link } from "react-router-dom";
 import { Button } from "../button";
-import travelHome from "/travelHome.jpg";
 
 function Hero() {
   return (
-    <div className="flex flex-col items-start mx-7 gap-9 p-10 mb-3 h-screen">
-      <h1 className="font-semibold text-6xl max-sm:text-3xl md:text-6xl lg:text-8xl text-center mt-8">
-        Your Dream Trip, <br />
-        Powered by AI
-      </h1>
-      <p className="text-md sm:text-md md:text-xl  text-gray-300 sm:text-gray-600 text-pretty w-3/4 font-semibold">
-        Tell us a bit about your vibe, and let our AI work
-        <br />
-        its magic to create the perfect trip for you. <br /> Your next epic
-        getaway starts here.
-      </p>
+    <div className="py-24 px-32 overflow-x-clip">
+      <div className="relative flex flex-col items-center justify-center">
+        {/* Content */}
+        <div className="flex justify-center">
+          <div className="inline-flex py-2 px-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full text-neutral-900">
+            ✈️ Powered by Gemini AI
+          </div>
+        </div>
+        <h1 className="text-6xl md:text-7xl lg:text-8xl font-semibold text-center mt-6 bg-gradient-to-r from-blue-400 via-green-500 to-yellow-500 text-transparent bg-clip-text">
+          Your <span className="text-indigo-500">Dream</span> Trip Awaits
+        </h1>
+        <p className="text-center text-xl text-white/75 mt-8 max-w-2xl mx-auto">
+          Answer a few questions, and let our AI craft the perfect trip tailored
+          just for you. Embark on a journey like never before.
+        </p>
 
-      <Link to={"/create-trip"}>
-        <Button>Get Started, it's Free</Button>
-      </Link>
-      <img src={travelHome} alt="hello" className="absolute -z-10 object-cover h-3/4 md:right-2 sm:right-2 right-0" />
+        <Link to={"/create-trip"} className="mt-8 inline-block  -translate-r-1/2 -translate-t-1/2">
+          <Button
+            variant="primary"
+            className="whitespace-normal bg-white text-gray-700 text-lg py-2 px-6 rounded-md hover:bg-green-400 hover:text-gray-50 shadow-lg hover:scale-105 transition-all duration-300 active:scale-100"
+          >
+            Get Started, It's Free
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,18 +1,12 @@
 function Footer() {
-  return (
-    <footer className="text-center p-5 mt-10 bg-gray-800 text-gray-100 ">
-      <div className="max-w-screen-lg mx-auto">
-        <h1 className="text-3xl font-bold mb-2">&copy; 2024 JetSetGo</h1>
-        <p className="text-md mb-4">
-          ✨ Explore. Plan. Enjoy. ✨ Your journey starts here. Let us make it
-          unforgettable.
-        </p>
+  const time = new Date().getFullYear();
 
-        <p className="text-sm mb-2">
-          Built with 💖 by mr_bob 🍀. Your trusted search companion.
-        </p>
-      </div>
-    </footer>
+  return (
+    <div className="absolute bottom-0 py-7 max-md:pt-5 mx-11 text-center text-white">
+      <h1 className="text-[15px] text-gray-400">
+        &copy; {time} | Built with 💖 by mr_bob.
+      </h1>
+    </div>
   );
 }
 
