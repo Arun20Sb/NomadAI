@@ -78,7 +78,7 @@ const AutocompleteInput = ({ apiKey, onChange }) => {
         value={searchText}
         onChange={handleInputChange}
         style={{ padding: "10px", width: "100%" }}
-        className="font-semibold bg-gray-900"
+        className="font-semibold bg-gray-50"
       />
       <ul
         style={{

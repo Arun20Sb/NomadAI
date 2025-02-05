@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom";
 
 // Import your page components
-import CreateTrip from "./create-trip/CreateTrip";
-import LandingPage from "./root/pages/LandingPage";
-import PageNotFound from "./root/pages/PageNotFound";
-import ViewTrip from "./root/pages/ViewTrip";
-import TripSave from "./mrTrip/TripSave";
+import CreateTrip from "./pages/CreateTrip";
+import LandingPage from "./pages/LandingPage";
+import PageNotFound from "./pages/PageNotFound";
+import ViewTrip from "./pages/ViewTrip";
+import TripSave from "./pages/TripSave";
 
 // Import additional UI components and providers
 import { Toaster } from "sonner";
@@ -14,10 +14,10 @@ import Footer from "./components/Footer";
 
 export default function App() {
   return (
-    <div className="bg-[#000000] min-h-screen relative pb-5">
+    <div className="backdrop-blur-lg min-h-screen relative">
       {/* Global Navbar that appears on every page */}
       <Navbar />
-      
+
       <Toaster />
       {/* Define routes for the application */}
       <Routes>

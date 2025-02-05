@@ -13,7 +13,7 @@ function Hotels({ tripDb }) {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${API_KEY}&q=${tripDb?.userSelect?.destination}+hotels&image_type=photo&per_page=7`
+          `https://pixabay.com/api/?key=${API_KEY}&q=${tripDb?.userSelect?.destination}+cushine&image_type=photo&per_page=7`
         );
         setImages(response.data.hits);
       } catch (error) {

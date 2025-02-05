@@ -13,7 +13,7 @@ function DailyPlan({ tripDb }) {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          `https://pixabay.com/api/?key=${API_KEY}&q=${tripDb?.userSelect?.destination}&image_type=photo&per_page=15`
+          `https://pixabay.com/api/?key=${API_KEY}&q=${tripDb?.userSelect?.destination}+hotels&image_type=photo&per_page=15`
         );
         console.log(response.data);
         setImages(response.data.hits);
