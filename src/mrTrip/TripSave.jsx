@@ -1,5 +1,5 @@
 import { db } from "@/service/firebaseConfig";
-import UserTripDetail from "@/view-trip/[tripId]/components/UserTripDetail";
+import UserTripDetail from "@/components/UserTripDetail";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";

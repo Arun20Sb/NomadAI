@@ -3,9 +3,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import InfoSec from "./components/InfoSec";
-import Hotels from "./components/Hotels";
-import DailyPlan from "./components/DailyPlan";
+import InfoSec from "../../components/InfoSec";
+import Hotels from "../../components/Hotels";
+import DailyPlan from "../../components/DailyPlan";
 
 function ViewTrip() {
   const { tripId } = useParams();

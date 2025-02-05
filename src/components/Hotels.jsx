@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import food from "/food.jpg";
 
 const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 

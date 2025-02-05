@@ -1,5 +1,4 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Button } from "../button";
+import { Link, useNavigate } from "react-router-dom";
 import logoPro from "/logoPro.png";
 import city from "/city.jpg";
 import { useState } from "react";
@@ -14,10 +13,11 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { GoogleLogin, googleLogout, useGoogleLogin } from "@react-oauth/google";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { toast } from "sonner";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
+import { Button } from "./ui/button";
 
 const navLinks = ["About Us", "Pricing", "Destination", "Contact Us"];
 

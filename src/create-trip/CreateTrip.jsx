@@ -1,35 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// Core UI and Form Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+// AI and External API Integrations
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+// Firebase Firestore Utilities
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/service/firebaseConfig";
+// Other Utilities:
+import { format } from "date-fns";
+import { toast } from "sonner";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import AutocompleteInput from "@/service/AutocompleteInput";
+import animationData from "../assets/calender1.json";
+
+// Constants and Configuration
 import {
   AI_PROMPT,
   SelectBudgetOptions,
   SelectTravelList,
 } from "@/constants/Options";
-import { toast } from "sonner";
-import { format } from "date-fns";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// Dialog Components for User Interactions
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Lottie from "lottie-react";
 import { Calendar } from "@/components/ui/calendar";
-import { FcGoogle } from "react-icons/fc";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/service/firebaseConfig";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
-import AutocompleteInput from "@/service/AutocompleteInput";
 
+// API Configuration from Environment
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 const GEOAPIFY_API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
-function CreateTrip() {
+const CreateTripForm = () => {
   const [place, setPlace] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -38,9 +47,12 @@ function CreateTrip() {
 
   const navigate = useNavigate();
 
+  // 📝 Form Input Handling Methods
   const handleInputChange = (e, name) => {
-    const value = typeof e === "object" ? e.target.value : e;
-    setFormInfo((prev) => ({ ...prev, [name]: value }));
+    setFormInfo((prev) => ({
+      ...prev,
+      [name]: e.target.value,
+    }));
   };
 
   const handlePlaceChange = (value) => {
@@ -48,43 +60,46 @@ function CreateTrip() {
     setFormInfo((prev) => ({ ...prev, destination: value }));
   };
 
-  // LOGIN:
-  const login = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log(tokenResponse);
-      getUserProfile(tokenResponse);
-      toast("User Signed In! 🍾 lfg🚀");
-    },
-    onError: (error) => {
-      console.log(error);
-      toast("Login failed. Please try again.");
-    },
-  });
+// 🔐 Google Authentication Methods
+const login = useGoogleLogin({
+  onSuccess: (tokenResponse) => {
+    getUserProfile(tokenResponse);
+    toast("User Signed In! 🍾 lfg🚀");
+  },
+  onError: (error) => {
+    console.log(error);
+    toast("Login failed. Please try again.");
+  },
+});
 
-  // User Profile:
-  const getUserProfile = (tokenInfo) => {
-    axios
-      .get(
-        `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenInfo?.access_token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenInfo?.access_token}`,
-            Accept: "Application/json",
-          },
-        }
-      )
-      .then((response) => {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        setOpenDialog(false);
-        onGenerateTrip();
-      })
-      .catch((error) => {
-        console.error("Error fetching user profile:", error);
-        toast("Failed to authenticate. Please try again.");
-      });
-  };
+// 👤 User Profile Retrieval Method
+const getUserProfile = (tokenInfo) => {
+  const token = tokenInfo?.access_token;
+  if (!token) {
+    toast("Invalid token.");
+    return;
+  }
 
-  // Generate Trip Button:
+  axios
+    .get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    })
+    .then((response) => {
+      localStorage.setItem("user", JSON.stringify(response.data));
+      setOpenDialog(false);
+      onGenerateTrip();
+    })
+    .catch((error) => {
+      console.error("Error fetching user profile:", error);
+      toast("Failed to authenticate. Please try again.");
+    });
+};
+
+
+  // 🚀 Trip Generation Core Logic
   const onGenerateTrip = async () => {
     const user = localStorage.getItem("user");
 
@@ -106,6 +121,11 @@ function CreateTrip() {
 
     if (formInfo?.days > 7) {
       toast("Please enter Trip Days less than or equal to 7");
+      return;
+    }
+
+    if (!place) {
+      toast("Please select a place to travel.");
       return;
     }
 
@@ -153,7 +173,7 @@ function CreateTrip() {
     }
   };
 
-  // Save Trip Details:
+  // 💾 Trip Saving to Firestore
   const saveAiTrip = async (tripDetails, formInfo) => {
     setIsLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
@@ -176,166 +196,156 @@ function CreateTrip() {
   };
 
   return (
-    <div className="sm:px-10 md:px-32 lg:px-56 px-5 mt-10 mb-5 text-gray-200 py-10">
-      <div className="border-2 p-5 bg-white text-gray-800 rounded-3xl">
-        <h2 className="font-bold text-3xl">
-          Tell us your travel preferences 🏕️
+    <div className="mt-16 mx-28 flex flex-col gap-12 p-6 bg-gray-900 text-gray-50 rounded-lg shadow-xl px-20">
+      {/* 🌍 Destination Selection Section */}
+      <div>
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+          What is your destination of choice?
         </h2>
-        <p className="mt-3 text-xl">
-          Customize your dream trip with our AI-powered travel planner
-        </p>
-
-        {/* Form Sections */}
-        <div className="mt-20 flex flex-col gap-9">
-          {/* Destination */}
-          <div>
-            <h2 className="text-xl my-3 font-medium  bg-gray-800 text-gray-50 p-2 inline-block rounded-lg">
-              What is your destination of choice?
-            </h2>
-            <AutocompleteInput
-              apiKey={GEOAPIFY_API_KEY}
-              onChange={handlePlaceChange}
-              placeholder="Enter your destination (e.g., Paris, Tokyo)"
-            />
-          </div>
-
-          {/* Trip Duration */}
-          <div>
-            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 p-2 inline-block rounded-lg">
-              How many days are you planning your trip?
-            </h2>
-            <Input
-              placeholder="Ex. 3"
-              type="number"
-              min={1}
-              max={7}
-              onChange={(e) => handleInputChange(e, "days")}
-              onWheel={(e) => e.preventDefault()}
-            />
-          </div>
-
-          {/* Date Selection */}
-          <div>
-            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">When are you going?</h2>
-            <div className="flex">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                className="rounded-2xl border-2 border-gray-900 bg-black text-gray-50"
-              />
-
-              <img
-                src="/calender.jpg"
-                alt="Travel inspiration"
-                className="w-[450px] mt-6 hidden lg:block rounded-lg filter brightness-125 relative bottom-5"
-              />
-            </div>
-          </div>
-
-          {/* Budget Selection */}
-          <div>
-            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">What is your Budget?</h2>
-            <div className="grid grid-cols-3 gap-6 mt-5">
-              {SelectBudgetOptions.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() =>
-                    handleInputChange(
-                      { target: { value: item.title } },
-                      "budget"
-                    )
-                  }
-                  className={`bg-black p-4 border rounded-lg hover:shadow-lg cursor-pointer  text-gray-50
-                ${
-                  formInfo?.budget === item.title
-                    ? "shadow-2xl border-4 border-green-400 animate-bounce bg-black"
-                    : ""
-                }
-                `}
-                >
-                  <h2 className="text-4xl pb-1">{item.icon}</h2>
-                  <h2 className="font-bold text-lg pb-1 underline">{item.title}</h2>
-                  <h2 className="text-sm">{item.desc}</h2>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Travelers Selection */}
-          <div>
-            <h2 className="text-xl my-3 font-medium bg-gray-800 text-gray-50 inline-block p-2 rounded-lg">
-              Who do you plan to travel with on your next adventure?
-            </h2>
-            <div className="grid grid-cols-3 gap-6 mt-5">
-              {SelectTravelList.map((place, index) => (
-                <div
-                  key={index}
-                  onClick={() =>
-                    handleInputChange(
-                      { target: { value: place.people } },
-                      "travelers"
-                    )
-                  }
-                  className={`p-4 bg-black border rounded-lg hover:shadow-lg cursor-pointer text-gray-50
-                  ${
-                    formInfo?.travelers === place.people &&
-                    "shadow-2xl border-4 border-green-400 animate-bounce bg-black"
-                  }
-                  `}
-                >
-                  <h2 className="text-4xl pb-1">{place.icon}</h2>
-                  <h2 className="font-bold text-lg underline pb-1">{place.title}</h2>
-                  <h2 className="text-sm">{place.desc}</h2>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Generate Trip Button */}
-        <div className="my-10 flex justify-end">
-          <Button onClick={onGenerateTrip} disabled={isLoading}>
-            {isLoading ? (
-              <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
-            ) : (
-              "Generate Trip"
-            )}
-          </Button>
-        </div>
-
-        {/* Login Dialog */}
-        {openDialog && (
-          <Dialog>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Sign In</DialogTitle>
-                <DialogDescription>
-                  <img
-                    src="/logo2.jpg"
-                    alt="JetSetGo"
-                    width={152}
-                    className="rounded-lg"
-                  />
-                  <h2 className="font-bold text-lg mt-7">
-                    Sign In With Google
-                  </h2>
-                  <p>Sign in to the App with Google authentication securely.</p>
-                  <Button
-                    className="w-full mt-5 flex items-center"
-                    onClick={login}
-                  >
-                    <FcGoogle />
-                    Sign In With Google
-                  </Button>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        )}
+        <AutocompleteInput
+          apiKey={GEOAPIFY_API_KEY}
+          onChange={handlePlaceChange}
+          placeholder="Enter your destination (e.g., Paris, Tokyo)"
+          className="mt-3 w-full px-4 py-2 rounded-md border border-gray-700 bg-black text-white focus:ring focus:ring-green-400"
+        />
       </div>
+
+      {/* ⏱️ Trip Duration Section */}
+      <div>
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+          How many days are you planning your trip?
+        </h2>
+        <Input
+          placeholder="Ex. 3"
+          type="number"
+          min={1}
+          max={7}
+          onChange={(e) => handleInputChange(e, "days")}
+          onWheel={(e) => e.preventDefault()}
+          className="mt-3 w-full px-4 py-2 rounded-md border border-gray-700 bg-gray-800 text-gray-50 focus:ring focus:ring-green-400"
+        />
+      </div>
+
+      {/* 📅 Date Selection Section */}
+      <div>
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+          When are you going?
+        </h2>
+        <div className="flex flex-col lg:flex-row items-center gap-16 mt-3">
+          <Calendar
+            mode="single"
+            selected={startDate}
+            onSelect={setStartDate}
+            className="rounded-md border"
+          />
+          <Lottie
+            animationData={animationData}
+            loop={true}
+            className="w-[500px] h-auto"
+          />
+        </div>
+      </div>
+
+      {/* 💰 Budget Selection Section */}
+      <div>
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+          What is your Budget?
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-5">
+          {SelectBudgetOptions.map((item, index) => (
+            <div
+              key={index}
+              onClick={() =>
+                handleInputChange({ target: { value: item.title } }, "budget")
+              }
+              className={`p-4 border rounded-lg cursor-pointer text-center transition-transform duration-200 ease-in-out transform hover:scale-105
+            ${
+              formInfo?.budget === item.title
+                ? "border-green-400 shadow-lg bg-gray-800"
+                : "bg-gray-900 border-gray-700"
+            }`}
+            >
+              <h2 className="text-3xl pb-1">{item.icon}</h2>
+              <h2 className="font-bold text-lg pb-1 underline">{item.title}</h2>
+              <p className="text-sm">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 👥 Travelers Selection Section */}
+      <div>
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+          Who do you plan to travel with?
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-5">
+          {SelectTravelList.map((place, index) => (
+            <div
+              key={index}
+              onClick={() =>
+                handleInputChange(
+                  { target: { value: place.people } },
+                  "travelers"
+                )
+              }
+              className={`p-4 border rounded-lg cursor-pointer text-center transition-transform duration-200 ease-in-out transform hover:scale-105
+            ${
+              formInfo?.travelers === place.people
+                ? "border-green-400 shadow-lg bg-gray-800"
+                : "bg-gray-900 border-gray-700"
+            }`}
+            >
+              <h2 className="text-3xl pb-1">{place.icon}</h2>
+              <h2 className="font-bold text-lg underline pb-1">
+                {place.title}
+              </h2>
+              <p className="text-sm">{place.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 🚀 Generate Trip Button */}
+      <div className="my-10 flex justify-center items-center to-gray-50 bg-black w-fit translate-x-1/2 ">
+        <Button onClick={onGenerateTrip} disabled={isLoading}>
+          {isLoading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
+      </div>
+
+      {/* 🔑 Login Dialog */}
+      {openDialog && (
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent className="text-white">
+            {" "}
+            {/* Add text-white class here */}
+            <DialogHeader>
+              <DialogTitle className="text-white">
+                {" "}
+                {/* Add text-white here too */}
+                Sign in with Google
+              </DialogTitle>
+            </DialogHeader>
+            <Button onClick={login} className="text-white bg-purple-300">
+              {" "}
+              {/* Button text white */}
+              Continue with Google
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setOpenDialog(false)}
+              className="text-white"
+            >
+              Close
+            </Button>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
-}
+};
 
-export default CreateTrip;
+export default CreateTripForm;
