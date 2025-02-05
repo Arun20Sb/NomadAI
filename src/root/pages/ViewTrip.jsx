@@ -1,8 +1,10 @@
-import { db } from "@/service/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
+
+import { doc, getDoc } from "firebase/firestore";
+import { f_database } from "@/db/firebaseconfig";
+
 import InfoSec from "../../components/InfoSec";
 import Hotels from "../../components/Hotels";
 import DailyPlan from "../../components/DailyPlan";
@@ -17,7 +19,7 @@ function ViewTrip() {
 
   // Fetching:
   const GetTripData = async () => {
-    const docRef = doc(db, "AiGeneratedTrips", tripId);
+    const docRef = doc(f_database, "NomadAI", tripId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {

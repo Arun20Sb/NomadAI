@@ -104,7 +104,7 @@ const AutocompleteInput = ({ apiKey, onChange }) => {
           </li>
         ))}
       </ul>
-      <div id="map" style={{ height: "400px", marginTop: "10px" }}></div>
+      <div id="map" style={{ height: "400px", marginTop: "11px" }}></div>
     </div>
   );
 };

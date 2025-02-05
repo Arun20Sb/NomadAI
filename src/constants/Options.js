@@ -88,7 +88,7 @@ You are a travel planning assistant. Your task is to generate a detailed travel 
        - \`placeName\`: Name of the place (string).
        - \`time\`: Time allocated for the activity (string).
        - \`details\`: A short description of the activity (string).
-     - Ensure each day has a minimum of 3 activities. You can include more if needed but do not restrict the number of activities to a set maximum.
+     - Ensure each day has a minimum of 4 activities. You can include more if needed but do not restrict the number of activities to a set maximum.
 
 4. Format the JSON for correctness and readability, ensuring it is valid for direct parsing.
 

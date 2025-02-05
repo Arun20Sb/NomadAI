@@ -10,9 +10,8 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 // Firebase Firestore Utilities
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/service/firebaseConfig";
+import { f_database } from "@/db/firebaseconfig";
 // Other Utilities:
-import { format } from "date-fns";
 import { toast } from "sonner";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import AutocompleteInput from "@/service/AutocompleteInput";
@@ -24,18 +23,11 @@ import {
   SelectBudgetOptions,
   SelectTravelList,
 } from "@/constants/Options";
-// Dialog Components for User Interactions
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import Lottie from "lottie-react";
-import { Calendar } from "@/components/ui/calendar";
+import LoginDialog from "@/components/LoginDialog";
 
 // API Configuration from Environment
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const GeminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 const GEOAPIFY_API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
 const CreateTripForm = () => {
@@ -54,62 +46,66 @@ const CreateTripForm = () => {
       [name]: e.target.value,
     }));
   };
-
+  const handleDateSelect = (e) => {
+    setStartDate(e.target.value);
+  };
   const handlePlaceChange = (value) => {
     setPlace(value);
     setFormInfo((prev) => ({ ...prev, destination: value }));
   };
 
-// 🔐 Google Authentication Methods
-const login = useGoogleLogin({
-  onSuccess: (tokenResponse) => {
-    getUserProfile(tokenResponse);
-    toast("User Signed In! 🍾 lfg🚀");
-  },
-  onError: (error) => {
-    console.log(error);
-    toast("Login failed. Please try again.");
-  },
-});
+  // 🔐 Google Authentication Methods
+  const login = useGoogleLogin({
+    flow: "implicit",
+    ux_mode: "popup", // 💡 Ensures popup mode to avoid COOP issues
+    onSuccess: (tokenResponse) => {
+      getUserProfile(tokenResponse);
+      toast("Successfully signed in! 🤝");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast("Login failed. Please try again.");
+    },
+  });
 
-// 👤 User Profile Retrieval Method
-const getUserProfile = (tokenInfo) => {
-  const token = tokenInfo?.access_token;
-  if (!token) {
-    toast("Invalid token.");
-    return;
-  }
+  // 👤 User Profile Retrieval Method
+  const getUserProfile = async (tokenInfo) => {
+    const token = tokenInfo?.access_token;
+    if (!token) {
+      toast("Invalid token.");
+      return;
+    }
 
-  axios
-    .get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    })
-    .then((response) => {
+    try {
+      const response = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
       localStorage.setItem("user", JSON.stringify(response.data));
       setOpenDialog(false);
       onGenerateTrip();
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error("Error fetching user profile:", error);
-      toast("Failed to authenticate. Please try again.");
-    });
-};
-
+      toast("Failed to authenticate. Please try again. 💀");
+    }
+  };
 
   // 🚀 Trip Generation Core Logic
   const onGenerateTrip = async () => {
     const user = localStorage.getItem("user");
-
     if (!user) {
       setOpenDialog(true);
       return;
     }
 
+    // Any Details missing?
     const requiredFields = ["destination", "budget", "travelers", "days"];
-
     const missingFields = requiredFields.filter((field) => !formInfo[field]);
 
     if (missingFields.length > 0) {
@@ -118,55 +114,47 @@ const getUserProfile = (tokenInfo) => {
       );
       return;
     }
-
     if (formInfo?.days > 7) {
       toast("Please enter Trip Days less than or equal to 7");
       return;
     }
-
     if (!place) {
       toast("Please select a place to travel.");
       return;
     }
-
     if (!startDate) {
       toast("Please select a valid date.");
       return;
     }
-
-    const formattedDate = format(startDate, "dd-MM-yyyy");
-
-    const updatedFormInfo = {
-      ...formInfo,
-      date: formattedDate,
-    };
-
-    const Final_Prompt = AI_PROMPT.replace(
-      "{location}",
-      updatedFormInfo?.destination
-    )
-      .replace("{totalDays}", updatedFormInfo?.days)
-      .replace("{traveler}", updatedFormInfo?.travelers)
-      .replace("{budget}", updatedFormInfo?.budget)
-      .replace("{date}", formattedDate);
+    // Final Prompt SetUp, given to AI:
+    const Final_Prompt = AI_PROMPT.replace("{location}", formInfo?.destination)
+      .replace("{totalDays}", formInfo?.days)
+      .replace("{traveler}", formInfo?.travelers)
+      .replace("{budget}", formInfo?.budget)
+      .replace("{date}", formInfo?.startDate);
 
     try {
       setIsLoading(true);
-      const genAI = new GoogleGenerativeAI(`${apiKey}`);
+      // ---------------------- Gen-AI Usage starts ----------------------
+      const genAI = new GoogleGenerativeAI(`${GeminiApiKey}`);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = Final_Prompt;
 
       const result = await model.generateContent(prompt);
+      console.log(result?.response.text());
+      // ---------------------- Gen-AI Usage starts ----------------------
+
       if (result?.response.text()) {
+        // 💾 Save Trip to Firebase Database:
+        saveAiTrip(result.response.text(), formInfo);
         toast("Your trip plan has been generated successfully! 🎉");
-        saveAiTrip(result.response.text(), updatedFormInfo);
       } else {
-        toast("Sorry, we couldn't generate your trip plan at the moment.");
+        toast("Sorry, we couldn't generate your trip plan at the moment !! 💀");
       }
     } catch (error) {
       console.error("Error generating trip:", error);
       toast(
-        "An error occurred while generating your trip plan. Please try again."
+        "An error occurred while generating your trip plan. Please try again. 💀"
       );
     } finally {
       setIsLoading(false);
@@ -180,13 +168,13 @@ const getUserProfile = (tokenInfo) => {
     const docID = Date.now().toString();
 
     try {
-      await setDoc(doc(db, "AiGeneratedTrips", docID), {
+      await setDoc(doc(f_database, "NomadAI", docID), {
         userSelect: formInfo,
         tripDetails: JSON.parse(tripDetails),
         userEmail: user?.email,
         id: docID,
       });
-      navigate(`/view-trip/${docID}`);
+      navigate(`/trip-details/${docID}`);
     } catch (error) {
       console.error("Error saving trip:", error);
       toast("Failed to save trip details. Please try again.");
@@ -228,16 +216,32 @@ const getUserProfile = (tokenInfo) => {
 
       {/* 📅 Date Selection Section */}
       <div>
-        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md">
+        <h2 className="text-xl font-semibold bg-gray-800 p-3 inline-block rounded-md shadow-md ">
           When are you going?
         </h2>
-        <div className="flex flex-col lg:flex-row items-center gap-16 mt-3">
-          <Calendar
-            mode="single"
-            selected={startDate}
-            onSelect={setStartDate}
-            className="rounded-md border"
-          />
+        <div className="flex flex-col lg:flex-row items-start gap-16 mt-3 ">
+          <div className="p-5 relative">
+            <input
+              type="date"
+              value={startDate || ""}
+              onChange={handleDateSelect}
+              className="p-3 mt-4 w-full max-w-xs bg-gray-700 border-2 border-gray-600 text-white rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {startDate && (
+              <p className="mt-4 text-lg text-gray-50">
+                Selected date:{" "}
+                <span className="text-violet-50 font-mono font-bold">
+                  {new Date(startDate).toDateString()}
+                </span>
+              </p>
+            )}
+            <Button
+              onClick={() => setStartDate(null)}
+              className="mt-2 bg-black text-white hover:bg-gray-700"
+            >
+              Clear Date
+            </Button>
+          </div>
           <Lottie
             animationData={animationData}
             loop={true}
@@ -318,31 +322,11 @@ const getUserProfile = (tokenInfo) => {
 
       {/* 🔑 Login Dialog */}
       {openDialog && (
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent className="text-white">
-            {" "}
-            {/* Add text-white class here */}
-            <DialogHeader>
-              <DialogTitle className="text-white">
-                {" "}
-                {/* Add text-white here too */}
-                Sign in with Google
-              </DialogTitle>
-            </DialogHeader>
-            <Button onClick={login} className="text-white bg-purple-300">
-              {" "}
-              {/* Button text white */}
-              Continue with Google
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setOpenDialog(false)}
-              className="text-white"
-            >
-              Close
-            </Button>
-          </DialogContent>
-        </Dialog>
+        <LoginDialog
+          open={openDialog}
+          setOpenDialog={setOpenDialog}
+          login={login}
+        />
       )}
     </div>
   );
