@@ -82,6 +82,7 @@ You are a travel planning assistant. Your task is to generate a detailed travel 
        - \`longitude\`: Longitude of the place (number).
      - \`ticketPricing\`: Ticket price in USD (number).
      - \`timeToVisit\`: Best time to visit the place (string).
+   - \`locationDetails\` (string): A 250 words description of the location (string) with 1 heading and 2 paragraph.
    - \`dayWisePlan\` (array): A day-by-day breakdown of activities. Each day should include:
      - \`day\`: Day number (integer).
      - \`activities\` (array): A list of activities, where each activity includes:

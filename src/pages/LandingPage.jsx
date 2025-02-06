@@ -4,7 +4,7 @@ import TripSave from "../pages/TripSave";
 
 function LandingPage() {
   return (
-    <div className="bg-[#EEE9D4]">
+    <div className="bg-[#EEE9D4] max-md:pt-20">
       <Hero />
       <Marquee />
       <TripSave />

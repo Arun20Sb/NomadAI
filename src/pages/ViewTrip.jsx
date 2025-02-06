@@ -32,19 +32,19 @@ function ViewTrip() {
   };
 
   return (
-    <div className="p-6 md:p-10 bg-gray-50 min-h-screen">
+    <div className="p-6 md:p-10 bg-[#EEE9D4] min-h-screen">
       {/* Information Section */}
-      <div className="mb-8 rounded-lg bg-white p-6">
+      <div className="mb-8 rounded-lg p-6">
         <InfoSec tripDb={tripDb} />
       </div>
 
       {/* Recommended Hotels Section */}
-      <div className="mb-8 shadow-lg rounded-lg bg-white p-6">
+      <div className="mb-8 rounded-lg p-6">
         <Hotels tripDb={tripDb} />
       </div>
 
       {/* Daily Plan Section */}
-      <div className="shadow-lg rounded-lg bg-white p-6">
+      <div className="rounded-lg p-6">
         <DailyPlan tripDb={tripDb} />
       </div>
     </div>

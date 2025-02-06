@@ -33,7 +33,7 @@ function UserTripDetail({ trip }) {
             : food
         }
         alt="Location"
-        className="h-36 w-full rounded-sm object-cover "
+        className="h-72 w-full rounded-sm object-cover "
       />
 
       <div className="mt-1 py-2">

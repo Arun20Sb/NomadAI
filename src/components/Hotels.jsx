@@ -25,14 +25,14 @@ function Hotels({ tripDb }) {
   }, [tripDb?.userSelect?.destination]);
 
   return (
-    <div className="p-8 min-h-screen">
+    <div className="pt-8 min-h-screen">
       <h2 className="font-bold text-4xl text-center text-gray-700 mb-12">
         Hotel Recommendations
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {tripDb?.tripDetails?.hotels?.map((hotel, index) => (
-          <div key={index} className="bg-white rounded-md shadow-lg">
+          <div key={index} className="rounded-md">
             <div className="relative">
               <img
                 src={images[index]?.webformatURL}

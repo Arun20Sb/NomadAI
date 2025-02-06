@@ -57,22 +57,25 @@ function Trip() {
       </div>
 
       {/* Card Grid */}
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 grid-auto-flow-dense">
         {userTrips.length > 0 ? (
-          userTrips.map((trip) => (
-            <div
-              key={trip.id}
-              className="bg-white p-3 rounded-lg shadow-xl hover:shadow-2xl cursor-pointer"
-            >
-              <UserTripDetail trip={trip} />
-              <Button
-                className="mt-4 w-fit py-3 text-lg text-white bg-indigo-600 hover:bg-indigo-700"
-                onClick={() => handleShowDetails(trip.id)}
+          userTrips
+            .slice() // Create a shallow copy to avoid mutating the original array
+            .reverse() // Reverse the order
+            .map((trip) => (
+              <div
+                key={trip.id}
+                className="bg-white p-3 rounded-lg shadow-xl hover:shadow-2xl cursor-pointer"
               >
-                Show Details
-              </Button>
-            </div>
-          ))
+                <UserTripDetail trip={trip} />
+                <Button
+                  className="mt-4 w-fit py-3 text-lg text-white bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => handleShowDetails(trip.id)}
+                >
+                  Show Details
+                </Button>
+              </div>
+            ))
         ) : (
           <p className="text-center text-gray-500 col-span-full">
             No trips found.
