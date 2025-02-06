@@ -53,8 +53,6 @@ const CreateTripForm = () => {
 
   // 🔐 Google Authentication Methods
   const login = useGoogleLogin({
-    flow: "implicit",
-    ux_mode: "popup", // 💡 Ensures popup mode to avoid COOP issues
     onSuccess: (tokenResponse) => {
       getUserProfile(tokenResponse);
       toast("Successfully signed in! 🤝");
