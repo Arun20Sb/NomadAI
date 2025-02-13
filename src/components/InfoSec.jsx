@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FiShare } from "react-icons/fi";
 import axios from "axios";
-import Slider from "react-slick";
 
 const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 
